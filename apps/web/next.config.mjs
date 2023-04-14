@@ -8,7 +8,6 @@ import SentryWebpackPlugin from '@sentry/webpack-plugin';
 import debugLocal from 'next-debug-local';
 
 import preset from './preset.config.mjs';
-import { getCommitHash, getGitVersion } from './scripts/gitInfo.mjs';
 
 const require = createRequire(import.meta.url);
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
@@ -91,8 +90,8 @@ const nextConfig = {
   publicRuntimeConfig: {
     PROJECT_NAME: process.env.npm_package_name ?? 'AFFiNE',
     BUILD_DATE: new Date().toISOString(),
-    gitVersion: getGitVersion(),
-    hash: getCommitHash(),
+    gitVersion: '70313eb5-dirty',
+    hash: '70313eb5',
     serverAPI:
       profileTarget[process.env.API_SERVER_PROFILE || 'dev'] ??
       profileTarget.dev,

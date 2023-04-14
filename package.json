@@ -29,7 +29,6 @@
     "test:unit": "vitest --run",
     "test:unit:ui": "vitest --ui",
     "test:unit:coverage": "vitest run --coverage",
-    "postinstall": "husky install",
     "notify": "node scripts/notify.mjs"
   },
   "lint-staged": {
