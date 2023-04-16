@@ -75,6 +75,7 @@ __metadata:
     clsx: ^1.2.1
     concurrently: ^8.0.1
     jest-mock: ^29.5.0
+    jotai: ^2.0.4
     kebab-case: ^1.0.2
     lit: ^2.7.2
     lottie-web: ^5.11.0
@@ -92,11 +93,11 @@ __metadata:
     wait-on: ^7.0.1
     yjs: ^13.5.52
   peerDependencies:
-    "@blocksuite/blocks": 0.0.0-20230409084303-221991d4-nightly
-    "@blocksuite/editor": 0.0.0-20230409084303-221991d4-nightly
-    "@blocksuite/global": 0.0.0-20230409084303-221991d4-nightly
-    "@blocksuite/icons": 2.1.10
-    "@blocksuite/store": 0.0.0-20230409084303-221991d4-nightly
+    "@blocksuite/blocks": "*"
+    "@blocksuite/editor": "*"
+    "@blocksuite/global": "*"
+    "@blocksuite/icons": "*"
+    "@blocksuite/store": "*"
   languageName: unknown
   linkType: soft
 
@@ -148,9 +149,17 @@ __metadata:
   resolution: "@affine/jotai@workspace:packages/jotai"
   dependencies:
     "@affine/env": "workspace:*"
+    "@blocksuite/blocks": 0.0.0-20230413190748-4d32b79a-nightly
+    "@blocksuite/editor": 0.0.0-20230413190748-4d32b79a-nightly
+    "@blocksuite/global": 0.0.0-20230413190748-4d32b79a-nightly
+    "@blocksuite/store": 0.0.0-20230413190748-4d32b79a-nightly
     jotai: ^2.0.4
     lottie-web: ^5.11.0
   peerDependencies:
+    "@blocksuite/blocks": "*"
+    "@blocksuite/editor": "*"
+    "@blocksuite/global": "*"
+    "@blocksuite/store": "*"
     lottie-web: "*"
   languageName: unknown
   linkType: soft
@@ -195,6 +204,7 @@ __metadata:
     "@emotion/styled": ^11.10.6
     "@mui/material": ^5.12.0
     "@perfsee/webpack": ^1.5.0
+    "@react-hookz/web": ^23.0.0
     "@redux-devtools/extension": ^3.2.5
     "@rich-data/viewer": ^2.15.6
     "@sentry/nextjs": ^7.47.0
@@ -257,8 +267,8 @@ __metadata:
     yjs: ^13.5.52
     zod: ^3.21.4
   peerDependencies:
-    "@blocksuite/blocks": 0.0.0-20230409084303-221991d4-nightly
-    "@blocksuite/store": 0.0.0-20230409084303-221991d4-nightly
+    "@blocksuite/blocks": "*"
+    "@blocksuite/store": "*"
   languageName: unknown
   linkType: soft
 
@@ -4681,6 +4691,29 @@ __metadata:
   version: 4.0.2
   resolution: "@react-dnd/shallowequal@npm:4.0.2"
   checksum: 7f21d691bddbfd4d2830948cbeefecca1600b2b46bcb1934926795f07ae8a1fa60a3dfd3a2112be5ef682c3820c80a99711e9fa15843f7e300acb25a4ecb70ab
+  languageName: node
+  linkType: hard
+
+"@react-hookz/deep-equal@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@react-hookz/deep-equal@npm:1.0.4"
+  checksum: 0923e364d309e32ee54e0850471a86488faf149d7a04ee838552cf5d54f493964623a8d742880ec82410cc1105530123f056e66dfc72b7da235d4cc93fad708f
+  languageName: node
+  linkType: hard
+
+"@react-hookz/web@npm:^23.0.0":
+  version: 23.0.0
+  resolution: "@react-hookz/web@npm:23.0.0"
+  dependencies:
+    "@react-hookz/deep-equal": ^1.0.4
+  peerDependencies:
+    js-cookie: ^3.0.1
+    react: ^16.8 || ^17 || ^18
+    react-dom: ^16.8 || ^17 || ^18
+  peerDependenciesMeta:
+    js-cookie:
+      optional: true
+  checksum: 230bff62291bcafa65e0b9adcc3f0769fd63fabc226c77149e7797d1ea67362e9ad581ceff3cdfe2949698798d2deefb223c05bdfed1e465b5d92298d48cf3e5
   languageName: node
   linkType: hard
 
