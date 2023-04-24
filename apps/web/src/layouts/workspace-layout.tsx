@@ -1,5 +1,5 @@
 import { DebugLogger } from '@affine/debug';
-import { config, DEFAULT_HELLO_WORLD_PAGE_ID } from '@affine/env';
+import { DEFAULT_HELLO_WORLD_PAGE_ID } from '@affine/env';
 import { ensureRootPinboard, initPage } from '@affine/env/blocksuite';
 import { setUpLanguage, useTranslation } from '@affine/i18n';
 import { createAffineGlobalChannel } from '@affine/workspace/affine/sync';
@@ -17,7 +17,14 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import type { FC, PropsWithChildren, ReactElement } from 'react';
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { openQuickSearchModalAtom, openWorkspacesModalAtom } from '../atoms';
 import {
@@ -153,21 +160,22 @@ export const CurrentWorkspaceContext = ({
   useRouterWithWorkspaceIdDefense(router);
   const metadata = useAtomValue(rootWorkspacesMetadataAtom);
   const exist = metadata.find(m => m.id === workspaceId);
+  const { t } = useTranslation();
   if (!router.isReady) {
-    return <PageLoading text="Router is loading" />;
+    return <PageLoading text={t('Router is Loading')} />;
   }
   if (!workspaceId) {
-    return <PageLoading text="Finding workspace id" />;
+    return <PageLoading text={t('Finding Workspace ID')} />;
   }
   if (!exist) {
-    return <PageLoading text="Workspace not found" />;
+    return <PageLoading text={t('Workspace Not Found')} />;
   }
   return <>{children}</>;
 };
 
 export const WorkspaceLayout: FC<PropsWithChildren> =
   function WorkspacesSuspense({ children }) {
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
     useEffect(() => {
       document.documentElement.lang = i18n.language;
       // todo(himself65): this is a hack, we should use a better way to set the language
@@ -175,6 +183,10 @@ export const WorkspaceLayout: FC<PropsWithChildren> =
     }, [i18n]);
     const currentWorkspaceId = useAtomValue(rootCurrentWorkspaceIdAtom);
     const jotaiWorkspaces = useAtomValue(rootWorkspacesMetadataAtom);
+    const meta = useMemo(
+      () => jotaiWorkspaces.find(x => x.id === currentWorkspaceId),
+      [currentWorkspaceId, jotaiWorkspaces]
+    );
     const set = useSetAtom(rootWorkspacesMetadataAtom);
     useEffect(() => {
       logger.info('mount');
@@ -227,6 +239,9 @@ export const WorkspaceLayout: FC<PropsWithChildren> =
         };
       }
     }, [currentWorkspaceId, jotaiWorkspaces]);
+
+    const Provider =
+      (meta && WorkspacePlugins[meta.flavour].UI.Provider) ?? DefaultProvider;
     return (
       <>
         {/* fixme(himself65): don't re-render whole modals */}
@@ -236,8 +251,12 @@ export const WorkspaceLayout: FC<PropsWithChildren> =
           </CurrentWorkspaceContext>
         </AllWorkspaceContext>
         <CurrentWorkspaceContext>
-          <Suspense fallback={<PageLoading text="Finding current workspace" />}>
-            <WorkspaceLayoutInner>{children}</WorkspaceLayoutInner>
+          <Suspense
+            fallback={<PageLoading text={t('Finding Current Workspace')} />}
+          >
+            <Provider>
+              <WorkspaceLayoutInner>{children}</WorkspaceLayoutInner>
+            </Provider>
           </Suspense>
         </CurrentWorkspaceContext>
       </>
@@ -251,6 +270,7 @@ export const WorkspaceLayoutInner: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
   const { jumpToPage } = useRouterHelper(router);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     logger.info('currentWorkspace: ', currentWorkspace);
@@ -393,11 +413,8 @@ export const WorkspaceLayoutInner: FC<PropsWithChildren> = ({ children }) => {
     );
   }, [setIsResizing, setSidebarOpen, setSliderWidth]);
 
-  const Provider =
-    WorkspacePlugins[currentWorkspace.flavour].UI.Provider ?? DefaultProvider;
-
   return (
-    <Provider>
+    <>
       <Head>
         <title>{title}</title>
       </Head>
@@ -437,8 +454,12 @@ export const WorkspaceLayoutInner: FC<PropsWithChildren> = ({ children }) => {
         </StyledSpacer>
         <MainContainerWrapper resizing={resizing} style={{ width: mainWidth }}>
           <MainContainer className="main-container">
-            <Suspense fallback={<PageLoading text="Page is Loading" />}>
-              {isLoading ? <PageLoading text="Page is Loading" /> : children}
+            <Suspense fallback={<PageLoading text={t('Page is Loading')} />}>
+              {isLoading ? (
+                <PageLoading text={t('Page is Loading')} />
+              ) : (
+                children
+              )}
             </Suspense>
             <StyledToolWrapper>
               {/* fixme(himself65): remove this */}
@@ -448,11 +469,7 @@ export const WorkspaceLayoutInner: FC<PropsWithChildren> = ({ children }) => {
               {!isPublicWorkspace && (
                 <HelpIsland
                   showList={
-                    router.query.pageId
-                      ? undefined
-                      : config.enableChangeLog
-                      ? ['whatNew', 'contact']
-                      : ['contact']
+                    router.query.pageId ? undefined : ['whatNew', 'contact']
                   }
                 />
               )}
@@ -461,6 +478,6 @@ export const WorkspaceLayoutInner: FC<PropsWithChildren> = ({ children }) => {
         </MainContainerWrapper>
       </StyledPage>
       <QuickSearch />
-    </Provider>
+    </>
   );
 };

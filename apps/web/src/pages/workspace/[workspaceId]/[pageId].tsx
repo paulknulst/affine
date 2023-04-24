@@ -1,3 +1,4 @@
+import { useTranslation } from '@affine/i18n';
 import { rootCurrentPageIdAtom } from '@affine/workspace/atom';
 import { WorkspaceFlavour } from '@affine/workspace/type';
 import { assertExists } from '@blocksuite/store';
@@ -26,7 +27,7 @@ import type { BlockSuiteWorkspace, NextPageWithLayout } from '../../../shared';
 
 function enableFullFlags(blockSuiteWorkspace: BlockSuiteWorkspace) {
   blockSuiteWorkspace.awarenessStore.setFlag('enable_set_remote_flag', false);
-  blockSuiteWorkspace.awarenessStore.setFlag('enable_database', true);
+  blockSuiteWorkspace.awarenessStore.setFlag('enable_database', false);
   blockSuiteWorkspace.awarenessStore.setFlag('enable_slash_menu', true);
   blockSuiteWorkspace.awarenessStore.setFlag('enable_edgeless_toolbar', true);
   blockSuiteWorkspace.awarenessStore.setFlag('enable_block_hub', true);
@@ -40,6 +41,7 @@ const WorkspaceDetail: React.FC = () => {
   const { openPage } = useRouterHelper(router);
   const currentPageId = useAtomValue(rootCurrentPageIdAtom);
   const [currentWorkspace] = useCurrentWorkspace();
+  const { t } = useTranslation();
   assertExists(currentWorkspace);
   const blockSuiteWorkspace = currentWorkspace.blockSuiteWorkspace;
   const { setPageMeta, getPageMeta } = usePageMetaHelper(blockSuiteWorkspace);
@@ -84,7 +86,7 @@ const WorkspaceDetail: React.FC = () => {
     }
   }, [currentWorkspace]);
   if (!currentPageId) {
-    return <PageLoading text="Loading page." />;
+    return <PageLoading text={t('Loading Page')} />;
   }
   if (currentWorkspace.flavour === WorkspaceFlavour.AFFINE) {
     const PageDetail = WorkspacePlugins[currentWorkspace.flavour].UI.PageDetail;
@@ -110,15 +112,16 @@ const WorkspaceDetailPage: NextPageWithLayout = () => {
   const router = useRouter();
   const currentWorkspace = useAtomValue(rootCurrentWorkspaceAtom);
   const currentPageId = useAtomValue(rootCurrentPageIdAtom);
+  const { t } = useTranslation();
   useRouterAndWorkspaceWithPageIdDefense(router);
   const page = useBlockSuiteWorkspacePage(
     currentWorkspace.blockSuiteWorkspace,
     currentPageId
   );
   if (!router.isReady) {
-    return <PageLoading text="Router is loading" />;
+    return <PageLoading text={t('Router is Loading')} />;
   } else if (!currentPageId || !page) {
-    return <PageLoading text="Page is loading" />;
+    return <PageLoading text={t('Page is Loading')} />;
   }
   return <WorkspaceDetail />;
 };

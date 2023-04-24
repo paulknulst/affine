@@ -1,4 +1,3 @@
-import { getLoginStorage } from '@affine/workspace/affine/login';
 import type { AffinePublicWorkspace } from '@affine/workspace/type';
 import { WorkspaceFlavour } from '@affine/workspace/type';
 import { createEmptyBlockSuiteWorkspace } from '@affine/workspace/utils';
@@ -14,10 +13,9 @@ function createPublicWorkspace(
 ): AffinePublicWorkspace {
   const blockSuiteWorkspace = createEmptyBlockSuiteWorkspace(
     workspaceId,
-    (k: string) =>
-      // fixme: token could be expired
-      ({ api: `api/workspace`, token: getLoginStorage()?.token }[k]),
+    WorkspaceFlavour.AFFINE,
     {
+      workspaceApis: affineApis,
       cachePrefix: WorkspaceFlavour.PUBLIC + (singlePage ? '-single-page' : ''),
     }
   );
@@ -27,7 +25,7 @@ function createPublicWorkspace(
   );
   blockSuiteWorkspace.awarenessStore.setFlag('enable_block_hub', false);
   blockSuiteWorkspace.awarenessStore.setFlag('enable_set_remote_flag', false);
-  blockSuiteWorkspace.awarenessStore.setFlag('enable_database', true);
+  blockSuiteWorkspace.awarenessStore.setFlag('enable_database', false);
   blockSuiteWorkspace.awarenessStore.setFlag('enable_edgeless_toolbar', false);
   blockSuiteWorkspace.awarenessStore.setFlag('enable_slash_menu', false);
   blockSuiteWorkspace.awarenessStore.setFlag('enable_drag_handle', false);

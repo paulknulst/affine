@@ -1,4 +1,5 @@
 import { displayFlex, IconButton, styled, Tooltip } from '@affine/component';
+import { config } from '@affine/env';
 import { useTranslation } from '@affine/i18n';
 import {
   getLoginStorage,
@@ -28,7 +29,7 @@ const IconWrapper = styled('div')(({ theme }) => {
     height: '32px',
     marginRight: '12px',
     fontSize: '24px',
-    color: theme.colors.iconColor,
+    color: 'var(--affine-icon-color)',
     ...displayFlex('center', 'center'),
   };
 });
@@ -79,6 +80,10 @@ export const SyncUser = () => {
 
   const { t } = useTranslation();
   const transformWorkspace = useTransformWorkspace();
+
+  if (!config.enableLegacyCloud) {
+    return null;
+  }
 
   if (status === 'offline') {
     return (

@@ -2,11 +2,13 @@ import { BrowserWindow, nativeTheme } from 'electron';
 import electronWindowState from 'electron-window-state';
 import { join } from 'path';
 
+import { logger } from '../../logger';
 import { isMacOS } from '../../utils';
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 
 async function createWindow() {
+  logger.info('create window');
   const mainWindowState = electronWindowState({
     defaultWidth: 1000,
     defaultHeight: 800,
@@ -45,7 +47,14 @@ async function createWindow() {
    * @see https://github.com/electron/electron/issues/25012
    */
   browserWindow.on('ready-to-show', () => {
-    browserWindow.show();
+    if (IS_DEV) {
+      // do not gain focus in dev mode
+      browserWindow.showInactive();
+    } else {
+      browserWindow.show();
+    }
+
+    logger.info('main window is ready to show');
 
     if (IS_DEV) {
       browserWindow.webContents.openDevTools();
@@ -61,12 +70,11 @@ async function createWindow() {
   /**
    * URL for main window.
    */
-  const pageUrl =
-    IS_DEV && process.env.DEV_SERVER_URL !== undefined
-      ? process.env.DEV_SERVER_URL
-      : 'file://./index.html'; // see protocol.ts
+  const pageUrl = process.env.DEV_SERVER_URL || 'file://./index.html'; // see protocol.ts
 
   await browserWindow.loadURL(pageUrl);
+
+  logger.info('main window is loaded at' + pageUrl);
 
   return browserWindow;
 }
@@ -85,9 +93,8 @@ export async function restoreOrCreateWindow() {
 
   if (browserWindow.isMinimized()) {
     browserWindow.restore();
+    logger.info('restore main window');
   }
-
-  browserWindow.focus();
 
   return browserWindow;
 }
